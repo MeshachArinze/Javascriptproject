@@ -40,4 +40,12 @@ export default class Calculator {
   set operation(value) {
     this.#operandDisplay.textContent = value ?? ""
   }
+
+  addDigit(digit) {
+    if (
+        digit === "." && this.#primaryOperanDiplay.dataset.value.includes(".")
+    ) {
+        return
+    }
+  }
 }
