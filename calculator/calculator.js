@@ -11,17 +11,17 @@ export default class Calculator {
     this.clear();
   }
 
-  #primaryOperanDiplay;
+  #primaryOperandDisplay;
   #secondaryOperandDisplay;
-  #operandDisplay;
+  #operationDisplay;
 
   get primaryOperand() {
-    return parseFloat(this.#primaryOperanDiplay.dataset.value);
+    return parseFloat(this.#primaryOperandDisplay.dataset.value);
   }
 
   set primaryOperand(value) {
-    this.#primaryOperanDiplay.dataset.value = value ?? "";
-    this.#primaryOperanDiplay.textContent = displayNumber(value);
+    this.#primaryOperandDisplay.dataset.value = value ?? "";
+    this.#primaryOperandDisplay.textContent = displayNumber(value);
   }
 
   get secondaryOperand() {
@@ -34,26 +34,29 @@ export default class Calculator {
   }
 
   get operation() {
-    return this.#operandDisplay.textContent;
+    return this.#operationDisplay.textContent;
   }
 
   set operation(value) {
-    this.#operandDisplay.textContent = value ?? "";
+    this.#operationDisplay.textContent = value ?? "";
   }
 
   addDigit(digit) {
     if (
       digit === "." &&
-      this.#primaryOperanDiplay.dataset.value.includes(".")
+      this.#primaryOperandDisplay.dataset.value.includes(".")
     ) {
       return;
     }
-
-    this.primaryOperand = this.#primaryOperanDiplay.dataset.value + digit;
+    if (this.primaryOperand === 0) {
+      this.primaryOperand = digit;
+      return;
+    }
+    this.primaryOperand = this.#primaryOperandDisplay.dataset.value + digit;
   }
 
   removeDigit() {
-    const numberString = this.#primaryOperanDiplay.dataset.value;
+    const numberString = this.#primaryOperandDisplay.dataset.value;
     if (numberString.length <= 1) {
       this.primaryOperand = 0;
       return;
@@ -64,7 +67,6 @@ export default class Calculator {
 
   evaluate() {
     let result;
-
     switch (this.operation) {
       case "*":
         result = this.secondaryOperand * this.primaryOperand;
@@ -81,13 +83,34 @@ export default class Calculator {
       default:
         return;
     }
-    this.clear();
 
+    this.clear();
     this.primaryOperand = result;
 
     return result;
   }
 
+  chooseOperation(operation) {
+    if (this.operation !== "") return;
+    this.operation = operation;
+    this.secondaryOperand = this.primaryOperand;
+    this.primaryOperand = 0;
+  }
 
+  clear() {
+    this.primaryOperand = 0;
+    this.secondaryOperand = null;
+    this.operation = null;
+  }
+}
 
+const NUMBER_FORMATTER = new Intl.NumberFormat("en");
+
+function displayNumber(number) {
+  const stringNumber = number?.toString() || "";
+  if (stringNumber === "") return "";
+  const [integer, decimal] = stringNumber.split(".");
+  const formattedInteger = NUMBER_FORMATTER.format(integer);
+  if (decimal == null) return formattedInteger;
+  return formattedInteger + "." + decimal;
 }
