@@ -47,5 +47,38 @@ export default class Calculator {
     ) {
         return
     }
+
+    this.primaryOperand = this.#primaryOperanDiplay.dataset.value + digit
+  }
+
+  removeDigit() {
+    const numberString = this.#primaryOperanDiplay.dataset.value
+    if (numberString.length <= 1) {
+      this.primaryOperand = 0
+      return
+    }
+
+    this.primaryOperand = numberString.substring(0, numberString.length - 1);
+  }
+
+  evaluate() {
+    let result
+
+    switch (this.operation) {
+      case "*":
+        result = this.secondaryOperand * this.primaryOperand;
+        break;
+      case "÷":
+        result = this.secondaryOperand / this.primaryOperand;
+        break;
+      case "+":
+        result = this.secondaryOperand + this.primaryOperand;
+        break;
+      case "-":
+        result = this.secondaryOperand - this.primaryOperand;
+        break;
+      default:
+        return;
+    }
   }
 }
